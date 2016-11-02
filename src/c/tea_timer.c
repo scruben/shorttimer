@@ -15,8 +15,8 @@ static char s_time_text[32];
 static char s_countdown_text[32];
 
 typedef struct {
-  char name[16];  // Name of this tea
-  int mins;       // Minutes to steep this tea
+  char name[16];  
+  int mins;   
 } TimerInfo;
 
 TimerInfo timer_array[] = {
@@ -49,8 +49,8 @@ static void select_callback(struct MenuLayer *s_menu_layer, MenuIndex *cell_inde
   // so time(NULL) + delay_time_in_seconds = wakeup_time
   time_t wakeup_time = time(NULL) + timer_array[cell_index->row].mins * 60;
 
-  // Use the tea_array index as the wakeup reason, so on wakeup trigger
-  // we know which tea is brewed
+  // Use the timer_array index as the wakeup reason, so on wakeup trigger
+  // we know which timer is 
   s_wakeup_id = wakeup_schedule(wakeup_time, cell_index->row, true);
 
   // If we couldn't schedule the wakeup event, display error_text overlay
@@ -182,7 +182,7 @@ static void countdown_window_unload(Window *window) {
 }
 
 static void wakeup_click_handler(ClickRecognizerRef recognizer, void *context) {
-  // Exit app after tea is done
+  // Exit app after timer is finished
   window_stack_pop_all(true);
 }
 
@@ -199,7 +199,7 @@ static void wakeup_window_load(Window *window) {
 
   window_set_click_config_provider(window, wakeup_click_config_provider);
 
-  // Bitmap layer for wakeup "tea is ready" image
+  // Bitmap layer for wakeup "time!" image
   s_bitmap_layer = bitmap_layer_create(bounds);
   s_time_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_TIME);
   bitmap_layer_set_bitmap(s_bitmap_layer, s_time_bitmap);
@@ -254,7 +254,7 @@ static void init(void) {
 
   // Check to see if we were launched by a wakeup event
   if (launch_reason() == APP_LAUNCH_WAKEUP) {
-    // If woken by wakeup event, get the event display "tea is ready"
+    // If woken by wakeup event, get the event display "time!"
     WakeupId id = 0;
     int32_t reason = 0;
     if (wakeup_get_launch_event(&id, &reason)) {
