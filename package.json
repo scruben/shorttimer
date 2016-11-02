@@ -1,0 +1,39 @@
+{
+    "author": "Hic et nunc",
+    "dependencies": {},
+    "keywords": [],
+    "name": "short-timer",
+    "pebble": {
+        "displayName": "Short timer",
+        "enableMultiJS": true,
+        "messageKeys": {
+            "dummy": 0
+        },
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/time-sign.png",
+                    "name": "IMAGE_TIME",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/st_icon.png",
+                    "name": "IMAGE_ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "basalt"
+        ],
+        "uuid": "89bcd079-41b7-4d8c-bc38-af385d86a55c",
+        "watchapp": {
+            "watchface": false
+        }
+    },
+    "version": "1.0.0"
+}
