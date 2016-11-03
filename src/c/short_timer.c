@@ -5,7 +5,7 @@
 static Window *s_menu_window, *s_countdown_window, *s_wakeup_window;
 static MenuLayer *s_menu_layer;
 static TextLayer *s_error_text_layer, *s_time_text_layer, *s_countdown_text_layer, 
-                 *s_cancel_text_layer;
+                 *s_cancel_text_layer, *s_current_time_text_layer;
 static BitmapLayer *s_bitmap_layer;
 static GBitmap *s_time_bitmap;
 
@@ -13,6 +13,7 @@ static WakeupId s_wakeup_id = -1;
 static time_t s_wakeup_timestamp = 0;
 static char s_time_text[32];
 static char s_countdown_text[32];
+static char s_time_text2[] = "00:00";
 
 typedef struct {
   char name[16];  
@@ -127,6 +128,10 @@ static void timer_handler(void *data) {
   int countdown = s_wakeup_timestamp - time(NULL);
   snprintf(s_countdown_text, sizeof(s_countdown_text), "%d s", countdown);
   layer_mark_dirty(text_layer_get_layer(s_countdown_text_layer));
+  time_t now = time(NULL);
+  struct tm *current_time = localtime(&now);
+  strftime(s_time_text2, sizeof(s_time_text2), "%T", current_time);
+  layer_mark_dirty(text_layer_get_layer(s_current_time_text_layer));
   app_timer_register(1000, timer_handler, data);
 }
 
@@ -153,16 +158,23 @@ static void countdown_window_load(Window *window) {
 
   window_set_click_config_provider(window, countdown_click_config_provider);
 
-  s_time_text_layer = text_layer_create(GRect(0, 32, bounds.size.w, 20));
+  s_time_text_layer = text_layer_create(GRect(0, 75, bounds.size.w, 20));
   text_layer_set_text(s_time_text_layer, "Time left");
   text_layer_set_text_alignment(s_time_text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(s_time_text_layer));
 
-  s_countdown_text_layer = text_layer_create(GRect(0, 72, bounds.size.w, 50));
+  s_countdown_text_layer = text_layer_create(GRect(0, 92, bounds.size.w, 35));
   text_layer_set_text(s_countdown_text_layer, s_countdown_text);
   text_layer_set_text_alignment(s_countdown_text_layer, GTextAlignmentCenter);
   text_layer_set_font(s_countdown_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   layer_add_child(window_layer, text_layer_get_layer(s_countdown_text_layer));
+  
+  //Show time
+  s_current_time_text_layer = text_layer_create(GRect(0, 10, bounds.size.w, 50));
+  text_layer_set_text(s_current_time_text_layer, s_time_text2);
+  text_layer_set_text_alignment(s_current_time_text_layer, GTextAlignmentCenter);
+  text_layer_set_font(s_current_time_text_layer, fonts_get_system_font(FONT_KEY_LECO_42_NUMBERS));
+  layer_add_child(window_layer, text_layer_get_layer(s_current_time_text_layer));
 
   // Place a cancel "X" next to the bottom button to cancel wakeup timer
   s_cancel_text_layer = text_layer_create(GRect(124, 116, 24, 28));
