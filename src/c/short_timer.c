@@ -82,10 +82,9 @@ static int16_t get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *cell_i
 static void draw_row_handler(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, 
                              void *callback_context) {
   char* name = timer_array[cell_index->row].name;
-  int text_gap_size = TIMER_TEXT_GAP - strlen(name);
-  int mins = timer_array[cell_index->row].mins;
 
-  // Using simple space padding between name and s_tea_text for appearance of edge-alignment
+
+  // Using simple space padding between name and s_time_text for appearance of edge-alignment
   snprintf(s_time_text, sizeof(s_time_text), "%s", PBL_IF_ROUND_ELSE("", name));
   menu_cell_basic_draw(ctx, cell_layer, PBL_IF_ROUND_ELSE(name, s_time_text), 
                        PBL_IF_ROUND_ELSE(s_time_text, NULL), NULL);
@@ -126,7 +125,7 @@ static void timer_handler(void *data) {
     wakeup_query(s_wakeup_id, &s_wakeup_timestamp);
   }
   int countdown = s_wakeup_timestamp - time(NULL);
-  snprintf(s_countdown_text, sizeof(s_countdown_text), "%d seconds", countdown);
+  snprintf(s_countdown_text, sizeof(s_countdown_text), "%d s", countdown);
   layer_mark_dirty(text_layer_get_layer(s_countdown_text_layer));
   app_timer_register(1000, timer_handler, data);
 }
@@ -159,9 +158,10 @@ static void countdown_window_load(Window *window) {
   text_layer_set_text_alignment(s_time_text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(s_time_text_layer));
 
-  s_countdown_text_layer = text_layer_create(GRect(0, 72, bounds.size.w, 20));
+  s_countdown_text_layer = text_layer_create(GRect(0, 72, bounds.size.w, 50));
   text_layer_set_text(s_countdown_text_layer, s_countdown_text);
   text_layer_set_text_alignment(s_countdown_text_layer, GTextAlignmentCenter);
+  text_layer_set_font(s_countdown_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   layer_add_child(window_layer, text_layer_get_layer(s_countdown_text_layer));
 
   // Place a cancel "X" next to the bottom button to cancel wakeup timer
